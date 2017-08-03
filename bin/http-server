@@ -33,6 +33,7 @@ if (argv.h || argv.help) {
     '  -U --utc     Use UTC time format in log messages.',
     '',
     '  -P --proxy   Fallback proxy if the request cannot be resolved. e.g.: http://someurl.com',
+    '  -f --forward       Enable X-Forward-* Headers for proxy requests. Only available with proxy setting. [false]',
     '',
     '  -S --ssl     Enable https.',
     '  -C --cert    Path to ssl cert file (default: cert.pem).',
@@ -50,6 +51,7 @@ var port = argv.p || parseInt(process.env.PORT, 10),
     ssl = !!argv.S || !!argv.ssl,
     proxy = argv.P || argv.proxy,
     utc = argv.U || argv.utc,
+    xForward = proxy ? !!argv.f || !!argv.forward : false,
     logger;
 
 if (!argv.s && !argv.silent) {
@@ -103,7 +105,8 @@ function listen(port) {
     ext: argv.e || argv.ext,
     logFn: logger.request,
     proxy: proxy,
-    showDotfiles: argv.dotfiles
+    showDotfiles: argv.dotfiles,
+    xForward: xForward
   };
 
   if (argv.cors) {
